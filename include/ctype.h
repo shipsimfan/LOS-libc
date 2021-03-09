@@ -1,13 +1,11 @@
-#ifndef _ERRNO_H
-#define _ERRNO_H 1
+#ifndef _CTYPE_H
+#define _CTYPE_H 1
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#define EBADF 1
-
-extern unsigned long long errno;
+int isdigit(int c);
 
 #if defined(__cplusplus)
 }

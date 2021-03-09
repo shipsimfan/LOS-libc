@@ -33,15 +33,16 @@ long int ftell(FILE* stream);
 int fflush(FILE* stream);
 
 int puts(const char* str);
+int fputs(const char* str, FILE* stream);
+int fputc(int character, FILE* stream);
 
 int printf(const char* format, ...);
 int fprintf(FILE* stream, const char* format, ...);
+int vfprintf(FILE* stream, const char* format, va_list arg);
 
 int scanf(const char* format, ...);
 
 void setbuf(FILE* stream, char* buf);
-
-int vfprintf(FILE* stream, const char* format, va_list arg);
 
 #if defined(__cplusplus)
 }
