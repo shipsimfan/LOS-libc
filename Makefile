@@ -34,30 +34,37 @@ AR_FLAGS := rcs
 all: install
 
 clean:
-	rm -rf $(SYSROOT_LIB_DIR)/*
-	rm -rf $(SYSROOT_INCLUDE_DIR)/*
-	rm -rf $(OBJ_DIR)/*
+	@rm -rf $(SYSROOT_LIB_DIR)/*
+	@rm -rf $(SYSROOT_INCLUDE_DIR)/*
+	@rm -rf $(OBJ_DIR)/*
+	@echo "[ LIBC ] Cleaned!"
 
 install: dirs includes $(LIBC) $(CRT0)
+	@echo "[ LIBC ] Build complete!"
 
 # COMPILATION RULES
 .SECONDEXPANSION:
 
 includes: $(HEADER_FILES)
-	cp -r $(INCLUDE_DIR)/ $(SYSROOT_INCLUDE_DIR)/..
+	@echo "[ LIBC ] Installing includes . . ."
+	@cp -r $(INCLUDE_DIR)/ $(SYSROOT_INCLUDE_DIR)/..
 
 
 $(LIBC): $(C_OBJ_FILES) $(ASM_OBJ_FILES)
-	$(AR) $(AR_FLAGS) $@ $^
+	@echo "[ LIBC ] (AR) $@ . . ."
+	@$(AR) $(AR_FLAGS) $@ $^
 
 $(CRT0): $(CRT0_SRC)
-	$(ASM) $(ASM_FLAGS) -o $@ $^
+	@echo "[ LIBC ] (AR) $@ . . ."
+	@$(ASM) $(ASM_FLAGS) -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $$(@D)/.
-	$(CC) $(CC_FLAGS) -o $@ $^
+	@echo "[ LIBC ] (CC) $@ . . ."
+	@$(CC) $(CC_FLAGS) -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm | $$(@D)/.
-	$(ASM) $(ASM_FLAGS) -o $@ $^
+	@echo "[ LIBC ] (CC) $@ . . ."
+	@$(ASM) $(ASM_FLAGS) -o $@ $^
 
 # DIRECTORY RULES
 $(OBJ_DIR)/.:

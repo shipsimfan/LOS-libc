@@ -9,4 +9,6 @@ int atexit(void (*function)()) {
     newNode->function = function;
     newNode->next = head;
     head = newNode;
+
+    return 0;
 }

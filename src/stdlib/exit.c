@@ -8,4 +8,7 @@ void exit(int status) {
         node->function();
 
     SystemCall(SYSTEM_CALL_EXIT, status, 0, 0, 0);
+
+    while (1)
+        ;
 }
