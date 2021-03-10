@@ -32,6 +32,7 @@ long int ftell(FILE* stream);
 
 int fflush(FILE* stream);
 
+int putchar(int character);
 int puts(const char* str);
 int fputs(const char* str, FILE* stream);
 int fputc(int character, FILE* stream);

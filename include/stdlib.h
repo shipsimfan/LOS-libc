@@ -7,11 +7,15 @@
 extern "C" {
 #endif
 
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+
 int atoi(const char* str);
 
 void free(void* ptr);
 void* malloc(size_t size);
 
+void exit(int status);
 void abort();
 int atexit(void (*function)());
 
