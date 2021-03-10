@@ -14,6 +14,7 @@ int atoi(const char* str);
 
 void free(void* ptr);
 void* malloc(size_t size);
+void* realloc(void* ptr, size_t size);
 
 void exit(int status);
 void abort();

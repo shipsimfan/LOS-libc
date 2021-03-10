@@ -22,7 +22,7 @@ ASM_OBJ_FILES := $(ASM_SRC_FILES:$(SRC_DIR)/%.asm=$(OBJ_DIR)/%.o)
 
 # PROGRAMS
 CC := x86_64-los-gcc
-CC_FLAGS := -c -Wall
+CC_FLAGS := -c -g -Wall
 
 ASM := nasm
 ASM_FLAGS := -f elf64
