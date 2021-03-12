@@ -18,6 +18,7 @@ pid_t execute(const char* filepath);
 int wait(pid_t pid);
 
 int getcwd(char* buf, unsigned long long size);
+int setcwd(const char* path);
 
 #if defined(__cplusplus)
 }
