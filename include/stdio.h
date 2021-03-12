@@ -12,6 +12,8 @@ extern "C" {
 #define SEEK_CUR 1
 #define SEEK_END 2
 
+#define EOF 0
+
 typedef struct {
     unsigned char type;
     unsigned long long descriptor;
