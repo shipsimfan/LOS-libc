@@ -25,7 +25,7 @@ CC := x86_64-los-gcc
 CC_FLAGS := -c -g -Wall
 
 ASM := nasm
-ASM_FLAGS := -f elf64
+ASM_FLAGS := -f elf64 -g -F dwarf
 
 AR := x86_64-los-ar
 AR_FLAGS := rcs
