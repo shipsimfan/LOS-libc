@@ -7,7 +7,7 @@ extern "C" {
 
 #define EBADF 1
 
-extern unsigned long long errno;
+extern int errno;
 
 #if defined(__cplusplus)
 }
