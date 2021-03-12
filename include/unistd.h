@@ -5,7 +5,16 @@
 extern "C" {
 #endif
 
+#define DIRENT_TYPE_FILE 0
+#define DIRENT_TYPE_DIRECTORY 1
+
 typedef unsigned long long pid_t;
+
+typedef struct {
+    char name[128];
+    unsigned char type;
+    unsigned long long size;
+} dirent_t;
 
 pid_t fork();
 
@@ -19,6 +28,7 @@ int wait(pid_t pid);
 
 int getcwd(char* buf, unsigned long long size);
 int setcwd(const char* path);
+dirent_t* getdirent(unsigned long long* num);
 
 #if defined(__cplusplus)
 }
