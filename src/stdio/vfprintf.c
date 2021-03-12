@@ -275,6 +275,9 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
                     idx = ntoa(stream, value, 0, base, precision, width, flags, idx);
                 }
             }
+
+            format++;
+            break;
         }
         case 'c': {
             unsigned int l = 1;
