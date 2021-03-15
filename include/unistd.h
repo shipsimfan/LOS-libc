@@ -16,12 +16,14 @@ typedef struct {
     unsigned long long size;
 } dirent_t;
 
+// Only here for libgcc, will remove when no longer reliant on gcc
+// For now, simply do not use
 pid_t fork();
-
 int execv(const char* path, const char* argv[]);
 int execvp(const char* file, const char* argv[]);
 int execvpe(const char* file, const char* argv[], const char* envp[]);
 
+// Instead use this if you want to create a new process
 pid_t execute(const char* filepath);
 
 int wait(pid_t pid);
