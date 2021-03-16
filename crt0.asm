@@ -10,10 +10,18 @@ _start:
     push rbp
     mov rbp, rsp
 
+    ; Save argc, argv, and envp
+    push rdi
+    push rsi
+    push rdx
+
     call initializeStandardLibrary
     
     call _init
 
+    pop rdx
+    pop rsi
+    pop rdi
     call main
 
     mov rdi, rax

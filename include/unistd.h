@@ -24,7 +24,7 @@ int execvp(const char* file, const char* argv[]);
 int execvpe(const char* file, const char* argv[], const char* envp[]);
 
 // Instead use this if you want to create a new process
-pid_t execute(const char* filepath);
+pid_t execute(const char* filepath, const char* argv[], const char* envp[]);
 
 int wait(pid_t pid);
 
