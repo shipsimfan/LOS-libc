@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "defs.h"
 
@@ -7,7 +8,18 @@ FILE* stdout;
 FILE* stderr;
 FILE* stdin;
 
-void initializeStandardLibrary() {
+char** environ;
+int environSize;
+
+void initializeStandardLibrary(char* envp[]) {
+    environ = envp;
+    environSize = 1;
+
+    while (*envp) {
+        environSize++;
+        envp++;
+    }
+
     stdout = malloc(sizeof(FILE));
     stderr = malloc(sizeof(FILE));
     stdin = malloc(sizeof(FILE));

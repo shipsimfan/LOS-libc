@@ -15,6 +15,7 @@ size_t strlen(const char* str);
 char* strcpy(char* destination, const char* source);
 int strcmp(const char* str1, const char* str2);
 unsigned int strnlen(const char* str, size_t maxsize);
+char* strcat(char* destination, const char* source);
 
 #if defined(__cplusplus)
 }

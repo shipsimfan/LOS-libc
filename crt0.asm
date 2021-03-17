@@ -15,6 +15,8 @@ _start:
     push rsi
     push rdx
 
+    mov rdi, rdx
+
     call initializeStandardLibrary
     
     call _init

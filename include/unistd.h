@@ -16,6 +16,12 @@ typedef struct {
     unsigned long long size;
 } dirent_t;
 
+extern char** environ;
+extern int environSize;
+
+char* getenv(const char* name);
+int setenv(const char* name, const char* value, int overwrite);
+
 // Only here for libgcc, will remove when no longer reliant on gcc
 // For now, simply do not use
 pid_t fork();
