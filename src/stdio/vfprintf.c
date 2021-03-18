@@ -19,6 +19,185 @@
 #define FLAGS_ADAPT_EXP (1U << 11U)
 
 #define PRINTF_NTOA_BUFFER_SIZE 32
+#define PRINTF_FTOA_BUFFER_SIZE 32
+#define PRINTF_MAX_FLOAT 1e9
+
+static const double POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+
+size_t ntoa(FILE* stream, unsigned long long value, int negative, unsigned long long base, unsigned int prec, unsigned int width, unsigned flags, size_t idx);
+size_t ftoa(FILE* stream, double value, unsigned int prec, unsigned int width, unsigned int flags, size_t idx);
+
+size_t etoa(FILE* stream, double value, unsigned int prec, unsigned int width, unsigned int flags, size_t idx) {
+    if (value != value || value > __DBL_MAX__ || value < -__DBL_MAX__)
+        return ftoa(stream, value, prec, width, flags, idx);
+
+    const int negative = value < 0;
+    if (negative)
+        value = -value;
+
+    if (!(flags & FLAGS_PRECISION))
+        prec = 6;
+
+    union {
+        unsigned long long u;
+        double f;
+    } conv;
+
+    conv.f = value;
+    int exp2 = (int)((conv.u >> 52) & 0x07FF) - 1023;
+    conv.u = (conv.u & ((1ULL << 52) - 1)) | (1023ULL << 52);
+    int expval = (int)(0.1760912590558 + exp2 * 0.301029995663981 + (conv.f - 1.5) * 0.289529654602168);
+    exp2 = (int)(expval * 3.321928094887362 + 0.5);
+    const double z = expval * 2.302585092994046 - exp2 * 0.6931471805599453;
+    const double z2 = z * z;
+    conv.u = (unsigned long long)(exp2 + 1023) << 52;
+    conv.f *= 1 + 2 * z / (2 - z + (z2 / (6 + (z2 / (10 + z2 / 14)))));
+
+    if (value < conv.f) {
+        expval--;
+        conv.f /= 10;
+    }
+
+    unsigned int minWidth = (expval < 100 && expval > -100) ? 4 : 5;
+
+    if (flags & FLAGS_ADAPT_EXP) {
+        if (value >= 1e-4 && value < 1e6) {
+            if ((int)prec > expval)
+                prec = (unsigned)((int)prec - expval - 1);
+            else
+                prec = 0;
+        }
+
+        flags |= FLAGS_PRECISION;
+        minWidth = 0;
+        expval = 0;
+    } else if (prec > 0 && (flags & FLAGS_PRECISION))
+        prec--;
+
+    unsigned int fwidth = width;
+    if (width > minWidth)
+        fwidth -= minWidth;
+    else
+        fwidth = 0;
+
+    if ((flags & FLAGS_LEFT) && minWidth)
+        fwidth = 0;
+
+    if (expval)
+        value /= conv.f;
+
+    const size_t startIdx = idx;
+    idx = ftoa(stream, negative ? -value : value, prec, fwidth, flags & ~FLAGS_ADAPT_EXP, idx);
+
+    if (minWidth) {
+        fputc((flags & FLAGS_UPPERCASE) ? 'E' : 'e', stream);
+        idx++;
+
+        idx = ntoa(stream, (expval < 0) ? -expval : expval, expval < 0, 10, 0, minWidth - 1, FLAGS_ZEROPAD | FLAGS_PLUS, idx);
+        if (flags & FLAGS_LEFT) {
+            while (idx - startIdx < width) {
+                fputc(' ', stream);
+                idx++;
+            }
+        }
+    }
+
+    return idx;
+}
+
+size_t ftoa(FILE* stream, double value, unsigned int prec, unsigned int width, unsigned int flags, size_t idx) {
+    char buf[PRINTF_FTOA_BUFFER_SIZE];
+    if (value != value)
+        return idx + fputs("nan", stream);
+    if (value < -__DBL_MAX__)
+        return idx + fputs("-inf", stream);
+    if (value > __DBL_MAX__)
+        return idx + fputs("inf", stream);
+
+    if (value > PRINTF_MAX_FLOAT || value < -PRINTF_MAX_FLOAT)
+        return etoa(stream, value, prec, width, flags, idx);
+
+    int negative = 0;
+    if (value < 0) {
+        negative = 1;
+        value = -value;
+    }
+
+    if (!(flags & FLAGS_PRECISION))
+        prec = 6;
+
+    size_t len = 0;
+    while (len < PRINTF_FTOA_BUFFER_SIZE && prec > 9) {
+        buf[len++] = '0';
+        prec--;
+    }
+
+    int whole = (int)value;
+    double tmp = (value - whole) * POW10[prec];
+    unsigned long frac = (unsigned long)tmp;
+    double diff = tmp - frac;
+
+    if (diff > 0.5) {
+        frac++;
+        if (frac >= POW10[prec]) {
+            frac = 0;
+            whole++;
+        }
+    } else if (diff < 0.5)
+        ;
+    else if (frac == 0 || (frac & 1))
+        frac++;
+
+    if (prec == 0) {
+        diff = value - (double)whole;
+        if ((!(diff < 0.5) || diff > 0.5) && (whole & 1))
+            whole++;
+    } else {
+        unsigned int count = prec;
+        while (len < PRINTF_FTOA_BUFFER_SIZE) {
+            count--;
+            buf[len++] = (char)(48 + (frac % 10));
+            if (!(frac /= 10))
+                break;
+        }
+
+        while (len < PRINTF_FTOA_BUFFER_SIZE && count-- > 0)
+            buf[len++] = '0';
+
+        if (len < PRINTF_FTOA_BUFFER_SIZE)
+            buf[len++] = '.';
+    }
+
+    while (len < PRINTF_FTOA_BUFFER_SIZE) {
+        buf[len++] = (char)(48 + (whole % 10));
+        if (!(whole /= 10))
+            break;
+    }
+
+    if (!(flags & FLAGS_LEFT) && (flags & FLAGS_ZEROPAD)) {
+        if (width && (negative || (flags & (FLAGS_PLUS | FLAGS_SPACE))))
+            width--;
+
+        while ((len < width) && (len < PRINTF_FTOA_BUFFER_SIZE))
+            buf[len++] = '0';
+    }
+
+    if (len < PRINTF_FTOA_BUFFER_SIZE) {
+        if (negative)
+            buf[len++] = '-';
+        else if (flags & FLAGS_PLUS)
+            buf[len++] = '+';
+        else if (flags & FLAGS_SPACE)
+            buf[len++] = ' ';
+    }
+
+    while (len) {
+        fputc(buf[--len], stream);
+        idx++;
+    }
+
+    return idx;
+}
 
 size_t ntoa(FILE* stream, unsigned long long value, int negative, unsigned long long base, unsigned int prec, unsigned int width, unsigned flags, size_t idx) {
     char buf[PRINTF_NTOA_BUFFER_SIZE];
@@ -279,6 +458,28 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
             format++;
             break;
         }
+        case 'f':
+        case 'F':
+            if (*format == 'F')
+                flags |= FLAGS_UPPERCASE;
+
+            idx = ftoa(stream, va_arg(arg, double), precision, width, flags, idx);
+            format++;
+            break;
+
+        case 'e':
+        case 'E':
+        case 'g':
+        case 'G':
+            if (*format == 'g' || *format == 'G')
+                flags |= FLAGS_ADAPT_EXP;
+            if (*format == 'E' || *format == 'G')
+                flags |= FLAGS_UPPERCASE;
+
+            idx = etoa(stream, va_arg(arg, double), precision, width, flags, idx);
+            format++;
+            break;
+
         case 'c': {
             unsigned int l = 1;
             if (!(flags & FLAGS_LEFT)) {
