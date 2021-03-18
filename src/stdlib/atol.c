@@ -1,12 +1,12 @@
 #include <stdlib.h>
 
-int atoi(const char* str) {
+long atol(const char* str) {
     if (str == NULL)
         return 0;
 
-    int ret = 0;
+    long ret = 0;
     int base = 10;
-    int mult = 1;
+    long mult = 1;
 
     while (*str == ' ')
         str++;

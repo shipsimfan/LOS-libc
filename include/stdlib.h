@@ -26,6 +26,11 @@ typedef struct {
 } lldiv_t;
 
 int atoi(const char* str);
+long atol(const char* str);
+long long atoll(const char* str);
+
+unsigned long strtoul(const char* restrict str, char** restrict endptr, int base);
+unsigned long long strtoull(const char* restrict str, char** restrict endptr, int base);
 
 void free(void* ptr);
 void* malloc(size_t size);
