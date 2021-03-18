@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+unsigned long long systime();
+
 #if defined(__cplusplus)
 }
 #endif
