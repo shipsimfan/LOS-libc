@@ -7,6 +7,8 @@ extern "C" {
 
 int isdigit(int c);
 
+int toupper(int c);
+
 #if defined(__cplusplus)
 }
 #endif
