@@ -45,6 +45,9 @@ div_t div(int numer, int denom);
 ldiv_t ldiv(long numer, long denom);
 lldiv_t lldiv(long long numer, long long denom);
 
+int rand();
+void srand(unsigned seed);
+
 #if defined(__cplusplus)
 }
 #endif

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "defs.h"
@@ -14,6 +15,8 @@ int environSize;
 void initializeStandardLibrary(char* envp[]) {
     environ = envp;
     environSize = 1;
+
+    srand(systime());
 
     while (*envp) {
         environSize++;
