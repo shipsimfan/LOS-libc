@@ -1,11 +1,14 @@
 #include <stdlib.h>
 
-unsigned long strtoul(const char* restrict str, char** restrict endptr, int base) {
+unsigned long strtoul(const char* str, char** endptr, int base) {
     if (endptr != NULL)
         *endptr = (char*)str;
 
     if (str == NULL)
         return 0;
+
+    while (*str == ' ')
+        str++;
 
     if (base == 0) {
         base = 10;
@@ -22,9 +25,6 @@ unsigned long strtoul(const char* restrict str, char** restrict endptr, int base
         return 0;
 
     unsigned long ret = 0;
-
-    while (*str == ' ')
-        str++;
 
     char newChar;
     while (*str && *str != '\n') {

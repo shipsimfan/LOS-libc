@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-unsigned long long strtoull(const char* str, char** endptr, int base) {
+long strtol(const char* str, char** endptr, int base) {
     if (endptr != NULL)
         *endptr = (char*)str;
 
@@ -8,6 +8,13 @@ unsigned long long strtoull(const char* str, char** endptr, int base) {
         return 0;
 
     while (*str == ' ')
+        str++;
+
+    long mult = 1;
+    if (*str == '-') {
+        mult = -1;
+        str++;
+    } else if (*str == '+')
         str++;
 
     if (base == 0) {
@@ -24,7 +31,7 @@ unsigned long long strtoull(const char* str, char** endptr, int base) {
     } else if (base < 2 || base > 36)
         return 0;
 
-    unsigned long long ret = 0;
+    long ret = 0;
 
     char newChar;
     while (*str && *str != '\n') {
@@ -37,7 +44,7 @@ unsigned long long strtoull(const char* str, char** endptr, int base) {
             if (*str < '0' || *str >= '0' + base) {
                 if (endptr != NULL)
                     *endptr = (char*)str;
-                return ret;
+                return ret * mult;
             }
 
             newChar = *str - '0';
@@ -51,7 +58,7 @@ unsigned long long strtoull(const char* str, char** endptr, int base) {
             else {
                 if (endptr != NULL)
                     *endptr = (char*)str;
-                return ret;
+                return ret * mult;
             }
         }
 
@@ -64,5 +71,5 @@ unsigned long long strtoull(const char* str, char** endptr, int base) {
     if (endptr != NULL)
         *endptr = (char*)str;
 
-    return ret;
+    return ret * mult;
 }

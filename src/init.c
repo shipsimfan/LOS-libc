@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "defs.h"
+#include "string/defs.h"
 
 FILE* stdout;
 FILE* stderr;
@@ -12,11 +13,15 @@ FILE* stdin;
 char** environ;
 int environSize;
 
+char* strtokState;
+
 void initializeStandardLibrary(char* envp[]) {
     environ = envp;
     environSize = 1;
 
     srand(systime());
+
+    strtokState = NULL;
 
     while (*envp) {
         environSize++;

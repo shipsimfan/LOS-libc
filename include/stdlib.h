@@ -28,9 +28,15 @@ typedef struct {
 int atoi(const char* str);
 long atol(const char* str);
 long long atoll(const char* str);
+double atof(const char* str);
 
-unsigned long strtoul(const char* restrict str, char** restrict endptr, int base);
-unsigned long long strtoull(const char* restrict str, char** restrict endptr, int base);
+long strtol(const char* str, char** endptr, int base);
+unsigned long strtoul(const char* str, char** endptr, int base);
+unsigned long long strtoull(const char* str, char** endptr, int base);
+
+float strtof(const char* nptr, char** endptr);
+double strtod(const char* nptr, char** endptr);
+long double strold(const char* nptr, char** endptr);
 
 void free(void* ptr);
 void* malloc(size_t size);
@@ -53,6 +59,12 @@ lldiv_t lldiv(long long numer, long long denom);
 
 int rand();
 void srand(unsigned seed);
+
+int system(const char* command);
+
+void qsort(void* base, size_t nel, size_t width, int (*compar)(const void*, const void*));
+
+void* bsearch(const void* key, const void* base, size_t nel, size_t width, int (*compar)(const void*, const void*));
 
 #if defined(__cplusplus)
 }
