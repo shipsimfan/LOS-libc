@@ -12,6 +12,8 @@ FILE* fopen(const char* filename, const char* mode) {
     FILE* file = (FILE*)malloc(sizeof(FILE));
     file->type = FILE_TYPE_FILE;
     file->descriptor = descriptor;
+    file->flags = 0;
+    file->unc = -1;
 
     return file;
 }
