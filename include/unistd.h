@@ -8,6 +8,9 @@ extern "C" {
 #define DIRENT_TYPE_FILE 0
 #define DIRENT_TYPE_DIRECTORY 1
 
+#define DIRENT_FLAG_READ_ONLY 1
+#define DIRENT_FLAG_HIDDEN 2
+
 typedef long long ssize_t;
 typedef __SIZE_TYPE__ size_t;
 typedef unsigned long long pid_t;
@@ -16,6 +19,7 @@ typedef struct {
     char name[128];
     unsigned char type;
     unsigned long long size;
+    unsigned long long flags;
 } dirent_t;
 
 extern char** environ;
