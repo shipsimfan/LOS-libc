@@ -80,6 +80,8 @@ void rewind(FILE* stream);
 
 void perror(const char* s);
 
+int truncate(FILE* file, long newSize);
+
 #if defined(__cplusplus)
 }
 #endif
